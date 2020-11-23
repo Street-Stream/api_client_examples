@@ -24,7 +24,7 @@ For point to point jobs the booking should specify the package type code.  Defin
 
 ```json
 {"id":"PT1003","type":"Envelope","size":"Large","maxWeightKilograms":1.0,"maxWidthCentimetres":42.0,"maxHeightCentimetres":30.0,"maxDepthCentimetres":5.0,"groupOrder":1,"orderInGroup":3,"active":true,"defaultTransportType":"BICYCLE"}
-```json
+```
 
 ### Courier Transport Types
 
@@ -32,4 +32,4 @@ In the case of multidrop jobs the booking is made on the basis of booking a cour
 
 ```json
 {"code":"UKCTT006","defaultLabel":"MEDIUM_VAN_MESSENGER","order":6,"motorised":true,"maxD1cm":70,"maxD2cm":170,"maxD3cm":120,"maxWeightKg":500}
-```json   
+```   
