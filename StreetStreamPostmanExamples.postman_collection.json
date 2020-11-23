@@ -1,0 +1,124 @@
+{
+	"info": {
+		"_postman_id": "65294f8d-7e51-435a-a157-99d4fd50e0b4",
+		"name": "Street Stream Postman examples",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ObtainAuthorizationToken",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"john@example.org\", \"authType\": \"CUSTOMER\",\"password\": \"ACCOUNT_PASSWORD_12!\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{HOST}}/api/tokens",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Point to Point",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{AUTHTOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"offerAcceptanceStrategy\": \"AUTO_HIGHEST_RATED_COURIER\",\n    \"packageTypeId\": \"PT1003\",\n    \"jobLabel\": \"My first test job\",\n    \"insuranceCover\": \"CORPORATE\",\n    \"submitForQuotesImmediately\": true,\n    \"pickUp\": {\n        \"contactNumber\" : \"020 7754 5452\",\n        \"contactName\" : \"Jane Doe\",\n        \"addressOne\" : \"A Company HQ\",\n        \"addressTwo\" : \"11 Claylands Road\",\n        \"city\" : \"London\",\n        \"county\" : \"\",\n        \"postcode\" : \"SW8 1NL\",\n        \"pickUpNotes\": \"notes about the pickup\",\n        \"pickUpFrom\": \"2020-11-23T14:34:37.339285Z\",\n        \"pickUpTo\": \"2020-11-23T15:04:37.339319Z\"\n    },\n    \"dropOff\": {\n        \"contactNumber\" : \"\",\n        \"contactName\" : \"S Holmes\",\n        \"addressOne\" : \"221b Baker Street\",\n        \"city\" : \"London\",\n        \"postcode\" : \"NE1 6XE\",\n        \"dropOffFrom\": \"2020-12-23T16:04:37.339589Z\",\n        \"dropOffTo\": \"2020-11-22T17:04:37.339593Z\",\n        \"clientTag\": \"ORDER-123\",\n        \"deliveryNotes\": \"Use the side alley ring second bell\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{HOST}}/api/job/pointtopoint",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"job",
+						"pointtopoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetPackageTypes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetInsuranceLevels",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetTransportTypesForMulti",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
