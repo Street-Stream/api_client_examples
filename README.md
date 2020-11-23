@@ -1,4 +1,4 @@
-# Documentation for the Street Strean API
+# Documentation for the Street Stream API
 
 ## Introduction
 
