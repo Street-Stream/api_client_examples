@@ -23,7 +23,11 @@ The system defines common package types, transport types and insurance levels us
 For point to point jobs the booking should specify the package type code.  Definitions of the sort of package we currently handle are available from https://prod-api.streetstreamdev.co.uk/api/ref-data/package-types . Each package type defines a unique ID which is passed into the booking process.  Ensuring that an appropriate package type is selected for a booking is important to ensure that the courier arrives with appropriate transport and can successfully complete the booking.  Below is an example of one of our current package type definitions.  This provides maximum dimensions as well as a maximum weight.  The order attributes are used for group and ordering in our web interface so would not usually be of interest to API users.     
 
 ```json
-{"id":"PT1003","type":"Envelope","size":"Large","maxWeightKilograms":1.0,"maxWidthCentimetres":42.0,"maxHeightCentimetres":30.0,"maxDepthCentimetres":5.0,"groupOrder":1,"orderInGroup":3,"active":true,"defaultTransportType":"BICYCLE"}
+{"id":"PT1003","type":"Envelope","size":"Large",
+  "maxWeightKilograms":1.0,
+  "maxWidthCentimetres":42.0,"maxHeightCentimetres":30.0,"maxDepthCentimetres":5.0,
+  "groupOrder":1,"orderInGroup":3,
+  "active":true,"defaultTransportType":"BICYCLE"}
 ```
 
 ### Courier Transport Types
@@ -31,5 +35,8 @@ For point to point jobs the booking should specify the package type code.  Defin
 In the case of multidrop jobs the booking is made on the basis of booking a courier with an appropriate transport type.  Current transport types are available from https://prod-api.streetstreamdev.co.uk/api/ref-data/courier-transport-types . Each transport type defines the maximum dimensions and weight for all the items needing to be delivered.
 
 ```json
-{"code":"UKCTT006","defaultLabel":"MEDIUM_VAN_MESSENGER","order":6,"motorised":true,"maxD1cm":70,"maxD2cm":170,"maxD3cm":120,"maxWeightKg":500}
+{"code":"UKCTT006","defaultLabel":"MEDIUM_VAN_MESSENGER",
+  "order":6,"motorised":true,
+  "maxD1cm":70,"maxD2cm":170,"maxD3cm":120,
+  "maxWeightKg":500}
 ```   
