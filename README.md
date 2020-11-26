@@ -14,16 +14,52 @@ For monitoring of live jobs we provide the ability to register a webhook which w
 
 Over the coming weeks we will be expanding our GitHub examples repository at https://github.com/Street-Stream/api_client_examples The initial version will focus on examples for the [Postman](https://www.postman.com) tool.
 
+## Authenticating
+
+In order to make calls to the Street Stream API A bearer token must be included with each request as an Authorization header. A Bearer token can be created by posting a payload as below to ***/api/tokens***.  The bearer token will then be returned in the response Authorization header.  Bearer tokens are valid for twenty four hours.
+
+```json
+{
+"email": "john@example.org", "authType": "CUSTOMER","password": "MY_PASSWORD"
+}
+
+```
+
+Some URLs also require your unique customer ID. If you don't know your customer ID it can be retreived by making a GET request to **/api/users/customer/whoami**  Which will return somethings like the below.
+
+```json
+{
+ "customerId":"83cd7db6-5051-493a-8c52-f1be0ee8add7", 
+ "registeredEmail":"john@example.orgm"
+}
+```
+
+## Street Stream Environments
+
+In addition to our production environment we provide a staging environment which can be used for testing.  You can self regsiter for an account but as mentioned we will need to enable invoicing.
+
+###Staging
+
+* https://stage-api.streetstreamdev.co.uk      **API**
+* https://staging.streetstream.co.uk **Customer web app**
+
+### Production 
+  
+* https://prod-api.streetstreamdev.co.uk      **API**
+* https://streetstream.co.uk **Customer web app**
+
+
 ## Reference Data
 
-The system defines common package types, transport types and insurance levels used in the booking process.
+The system defines common package types, transport types and insurance levels used in the booking process.  Requests to retrieve reference data do not require a bearer token.
 
 ### Package Types
 
 For point to point jobs the booking should specify the package type code.  Definitions of the sort of package we currently handle are available from https://prod-api.streetstreamdev.co.uk/api/ref-data/package-types . Each package type defines a unique ID which is passed into the booking process.  Ensuring that an appropriate package type is selected for a booking is important to ensure that the courier arrives with appropriate transport and can successfully complete the booking.  Below is an example of one of our current package type definitions.  This provides maximum dimensions as well as a maximum weight.  The order attributes are used for group and ordering in our web interface so would not usually be of interest to API users.     
 
 ```json
-{"id":"PT1003","type":"Envelope","size":"Large",
+{
+  "id":"PT1003","type":"Envelope","size":"Large",
   "maxWeightKilograms":1.0,
   "maxWidthCentimetres":42.0,"maxHeightCentimetres":30.0,"maxDepthCentimetres":5.0,
   "groupOrder":1,"orderInGroup":3,
@@ -36,7 +72,8 @@ For point to point jobs the booking should specify the package type code.  Defin
 In the case of multidrop jobs the booking is made on the basis of booking a courier with an appropriate transport type.  Current transport types are available from https://prod-api.streetstreamdev.co.uk/api/ref-data/courier-transport-types . Each transport type defines the maximum dimensions and weight for all the items needing to be delivered.
 
 ```json
-{"code":"UKCTT006","defaultLabel":"MEDIUM_VAN_MESSENGER",
+{ 
+  "code":"UKCTT006","defaultLabel":"MEDIUM_VAN_MESSENGER",
   "order":6,"motorised":true,
   "maxD1cm":70,"maxD2cm":170,"maxD3cm":120,
   "maxWeightKg":500
@@ -48,7 +85,8 @@ In the case of multidrop jobs the booking is made on the basis of booking a cour
 Street Stream allows customers to specify different levels of insurance cover on a per booking basis.  Current insurance levels can be retrieved from https://prod-api.streetstreamdev.co.uk/api/ref-data/insurance-levels . Below shows the data for our professional level which comes with a VAT exclusive additional cost of £1 and provides cover up to £1,000 per booking.  If cover level is not specified it defaults to our personal cover level with no additional cost and cover of up to £100 per booking.     
 
 ```json
-{"defaultLabel":"PROFESSIONAL",
+{ 
+  "defaultLabel":"PROFESSIONAL",
   "code":"UKIC0002",
   "exVatCost":1.00,"payableVat":0.20,"totalPayableWithVat":1.20,
   "maxCover":1000,"currencyCode":"GBP"
@@ -61,7 +99,7 @@ Selecting an offer acceptance strategy allows our customers to determine which o
 
 #### AUTO CLOSEST COURIER TO ME
 
-We track where the courier is when they make an offer to carryout a job and determine their distance to the first pickup.  The job is then given to the courier can get to you in the shortest amount of time.  Typically this is used for very urgent jobs.
+We track where the courier is when they make an offer to carry out a job and determine their distance to the first pickup.  The job is then given to the courier can get to you in the shortest amount of time.  Typically this is used for very urgent jobs.
 
 #### AUTO FAVOURITE COURIER
 
@@ -174,11 +212,11 @@ Issue a GET request will return something similar to the below. The returned dat
     "packageTypeId": "PT1003",
     "jobLabel": "My first test job",
     "jobExpiry": "2020-11-26T15:04:37.339319Z",
-    "jobCharge": {
+       "jobCharge": {
         "exVatTotalPriceBeforeInsurance": 13.27,
-        "exVatInsurance": 0.00,
-        "payableVat": 2.65,
-        "totalPayableWithVat": 15.92,
+        "exVatInsurance": 2.00,
+        "payableVat": 3.05,
+        "totalPayableWithVat": 18.32,
         "currencyCode": "GBP",
         "discountAmount": 0.00
     },
@@ -253,6 +291,87 @@ Issue a GET request will return something similar to the below. The returned dat
     "isTerminal": false
 }
 ```
+
+
+## Getting Notified About Status Updates
+
+Customers can register a webhook which will be called each time an event that is notifiable is applied to a job, drop or pick up. 
+
+### Registering the webhook
+
+Registering a webhook can be done by sending a post request to **/api/users/customer/webhook/{{CUSTOMER_ID}}**.
+
+```json
+{
+    "url":"https://mywebhook.example.org"
+}
+``` 
+
+This will return if the webhook is HTTPS and could be invoked successfully.  To test the webhook we make a POST request with below payload.  The reponse to the test POST needs to be 200 in order for the webhook to be successfully regsitered.
+
+```json
+{
+    "type":"test","message":"Hello From Street Stream"
+}
+```
+
+### Status Updates
+
+Examples of status updates sent to registered webhooks are shown below.  The main difference is wheter they include a stopId.
+
+A job that has been fully completed would result in.
+
+```json
+{
+   "notificationType":"JOB",
+   "jobId":"84bc9c2ebbb6-49dc-8e1fbc62e66a71e2",
+   "status":"COMPLETED_SUCCESSFULLY","stopId":null,
+   "appliedAt":"2020-11-26T09:59:29.948136Z"
+}
+```
+
+Courier arrived for pick up
+
+```json
+{
+   "notificationType":"JOB",
+   "jobId":"84bc9c2e-bbb6-49dc-8e1f-bc62e66a71e2",
+   "status":"ARRIVED_AT_COLLECTION",
+   "stopId":"ed785e83-d9c0-4a30-b8ec-677d08e1178a",
+   "appliedAt":"2020-11-26T09:58:37.396791Z"
+}
+```
+
+Succesful collection
+
+```json
+{
+    "notificationType":"JOB",
+    "jobId":"84bc9c2e-bbb6-49dc-8e1f-bc62e66a71e2",
+    "status":"COLLECTED",
+    "stopId":"ed785e83-d9c0-4a30-b8ec-677d08e1178a",
+    "appliedAt":"2020-11-26T09:58:39.179154Z"
+}
+```
+
+Successful delivery
+
+```json
+{
+   "notificationType":"JOB",
+   "jobId":"84bc9c2e-bbb6-49dc-8e1f-bc62e66a71e2",
+   "status":"DELIVERED",
+   "stopId":"a6e3efd8-4c3f-417c-8e91-a2adce629e54",
+   "appliedAt":"2020-11-26T09:59:29.483869Z"
+}
+```
+
+
+
+
+ 
+
+
    
   
  
