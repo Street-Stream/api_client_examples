@@ -59,14 +59,201 @@ Street Stream allows customers to specify different levels of insurance cover on
 
 Selecting an offer acceptance strategy allows our customers to determine which of the couriers who offer to take on the job we match their booking to. Currently this is a fairly short list.
 
-#### AUTO_CLOSEST_COURIER_TO_ME
+#### AUTO CLOSEST COURIER TO ME
 
 We track where the courier is when they make an offer to carryout a job and determine their distance to the first pickup.  The job is then given to the courier can get to you in the shortest amount of time.  Typically this is used for very urgent jobs.
 
-#### AUTO_FAVOURITE_COURIER
+#### AUTO FAVOURITE COURIER
 
 Our customers often build long term relationships with couriers undertaking their deliveries.  Marking a courier they have previously used as a favourite means we automatically select that courier if they are available. 
 
-#### AUTO_HIGHEST_RATED_COURIER
+#### AUTO HIGHEST RATED COURIER
 
 Customers have the opportunity to rate the courier for each job booked through Street Stream.  By using this option we simply select the courier with the highest average rating for the job.
+
+## Job Status, Pick Up Status and Drop Off Status
+
+Every job, pick up and drop off has a single status and a history of statuses that have been applied. This section details all possible statuses and wether the customer will be notified of a particualr status being applied if they have registered a webhook with Street Strem, see the Webhook section for details.  
+
+Job Status    | Notified by Webhook |  Description
+------------- | --------------------|------------------
+DRAFT			 |  No                 | Intial status of job when created.  Where submit immediately is true will transition directly to SUBMITTED FOR OFFERS.  Draft jobs are not yet visible to couriers and no quotes will be received.
+SUBMITTED FOR OFFERS  | No				| The job is visible to couriers who can quote the job.
+OFFERS RECEIVED | Yes | Triggered by at least one courier offering to undertake the job.
+OFFER SELECTED | No | One of the courier quotes has been selected.  In the case of API jobs this is triggered by the acceptance algorithm.
+JOB AGREED | Yes | The details of the job including payment and which courier will undertake the job have been agreed. Since obth sides are now committed cancellation after this point will incurr a cancellation charge.
+CANCELLED BEFORE ARRIVAL | No | Customer has requested cancellation prior to the courier arriving. A cancellation fee will apply. This is a terminal state for the job so no further status updates should be expected.
+IN PROGRESS | Yes | Triggered when a courier arrives at the first collection.
+COMPLETED SUCESSFULLY | Yes | All packages have been delivered successfully. Terminal state.
+FAILED | Yes | All | The job has failed.  This will be triggered if the collection fails.  A seperate pick up status notification for the pick up will also be received to indicate which pick up and why it failed.
+ADMIN_CANCELLED | Yes | A Street Stream administrator needed to cancel the job.  
+
+Additonally there is **AUTHORISE CARD and EXPIRED DURING PAYMENT**. This could be seen on historical jobs booked through our web interface and paid for by credit card.  These would not occur on API jobs with invoicing.
+
+#### Pick Up Status
+
+Pick Up Status    | Notified by Webhook |  Description
+------------- | --------------------|------------------
+NOT YET COLLECTED | No | Initial status when job is created.
+CUSTOMER CANCELLED BEFORE ARRIVAL | No | Customer has cancelled the job the pick up was part of.
+ARRIVED AT COLLECTION | Yes | The courier hjas arrived at the location of the pick up.
+COLLECTED | Yes | Collection has been made successfully. Terminal state.
+NOT AS DESCRIBED | Yes | Courier could not accept the package as it did not comply with the packae type in the booking.  For example was too heavy for a cycle courier to accept. Terminal state.
+NO RESPONSE | Yes | The courier was unable to get answer using the provided address and contact details.  Couriers can only apply this status once at least 15 minutes has passed since they applied ARRIVED AT COLLECTION. Terminal state
+CUSTOMER CANCELLED ON ARRIVAL | No | Customer triggered cancellation after courier arrives.
+
+### Drop Off Status
+
+
+Drop Off Status    | Notified by Webhook |  Description
+------------- | --------------------|------------------
+NOT YET COLLECTED | No | Initial status when job is created.
+COLLECTED | No | Pick up for this drop has been carred out successfully.
+CANCELLED | No | Drop has been cancelled possibly due to a failure to pick up or cancellation.
+ARRIVED AT DELIVERY | Yes | Courier has arrived at the provided address.
+DELIVERY ATTEMPT FAILED | Yes | Courier was unable to deliver the package on this attempt.  Can occur mutiple times.
+DELIVERED | Yes | Package was succssfulyl deliverd.  Notes and singature if requested will now be avaialble.  
+
+
+## Creating a Point to Point Job
+
+Below is an example taken fron the Postman collection requesting a point to point job for package code PT1003 (an envelope).  The job is to be submitted immediately with the Street Stream system selecting the highest rated courier able to do the job. All timestamps must use UTC.  Most text fields are limited to a lenght of 255 with the exception of notes which allow up to 500.  Address two , county and country can be provided ommitted or null.  Address one can be used to contain business and first line for example 'Blogs and Blogs Ltd, 12 Mornington Crescent' as one line.
+
+```json
+{
+    "offerAcceptanceStrategy": "AUTO_HIGHEST_RATED_COURIER",
+    "packageTypeId": "PT1003",
+    "jobLabel": "My first test job",
+    "insuranceCover": "CORPORATE",
+    "submitForQuotesImmediately": true,
+    "pickUp": {
+        "contactNumber" : "020 7754 5452",
+        "contactName" : "Jane Doe",
+        "addressOne" : "A Company HQ",
+        "addressTwo" : "11 Claylands Road",
+        "city" : "London",
+        "county" : "",
+        "postcode" : "SW8 1NL",
+        "pickUpNotes": "notes about the pickup",
+        "pickUpFrom": "2020-11-26T14:34:37.339285Z",
+        "pickUpTo": "2020-11-26T15:04:37.339319Z"
+    },
+    "dropOff": {
+        "contactNumber" : "",
+        "contactName" : "S Holmes",
+        "addressOne" : "221b Baker Street",
+        "city" : "London",
+        "postcode" : "NE1 6XE",
+        "dropOffFrom": "2020-12-26T16:04:37.339589Z",
+        "dropOffTo": "2020-11-26T17:04:37.339593Z",
+        "clientTag": "ORDER-123",
+        "deliveryNotes": "Use the side alley ring second bell"
+    }
+}
+```
+
+### Reponse
+
+After sending a ***POST*** which results in the successful creation of a job the Street Stream system will redirect to the location for the new job from which can be used to get the details of the create job. Clients can either follow the redirect or retreive the Location header from the response. The returned location will look something like /api/job/pointtopoint/eb81d193-97e0-498f-a4f4-b248f5c0f7 for a point to point job.
+
+Issue a GET request will return something similar to the below. The returned data contains the data provided at booking time with the addition of the following. 
+
+* Job pricing broken down to show courier cost, insturance cost and applicable VAT
+* An estimate of the distance required to get from the pick up to the drop off and an estimate of how long that will take
+* A unique identifier for the job and for each pick up or drop off
+* Coordinates for each pick up or drop off 
+* The history of statuses applied to the job
+* The courier id which will be null until the job is agreed
+* Quotes received for the job if any
+* The quote that has been selected if any
+
+```json
+{
+    "id": "6d4f4a91-18c2-491e-89df-c97edf9775df",
+    "offerAcceptanceStrategy": "AUTO_HIGHEST_RATED_COURIER",
+    "packageTypeId": "PT1003",
+    "jobLabel": "My first test job",
+    "jobExpiry": "2020-11-26T15:04:37.339319Z",
+    "jobCharge": {
+        "exVatTotalPriceBeforeInsurance": 13.27,
+        "exVatInsurance": 0.00,
+        "payableVat": 2.65,
+        "totalPayableWithVat": 15.92,
+        "currencyCode": "GBP",
+        "discountAmount": 0.00
+    },
+    "jobStatus": "SUBMITTED_FOR_OFFERS",
+    "jobCreated": "2020-11-26T11:18:00.894459Z",
+    "jobLastModified": "2020-11-26T11:18:01.089617Z",
+    "courierId": null,
+    "feedbackProvided": false,
+    "confirmedPaymentMechanism": "INVOICE",
+    "insuranceCover": "CORPORATE",
+    "estimatedRouteDistanceKm": 8.36,
+    "estimatedRouteTimeSeconds": 2733,
+    "quotes": [],
+    "selectedQuote": null,
+    "pickUp": {
+        "id": "2d8c9a0e-8bed-4568-9629-48cd766e5e25",
+        "addressOne": "A Company HQ",
+        "addressTwo": "11 Claylands Road",
+        "city": "London",
+        "county": "",
+        "country": null,
+        "postcode": "SW8 1NL",
+        "contactNumber": "020 7754 5452",
+        "contactName": "Jane Doe",
+        "pickUpNotes": "notes about the pickup",
+        "pickUpFrom": "2020-11-26T14:34:37.339285Z",
+        "pickUpTo": "2020-11-26T15:04:37.339319Z",
+        "routeStopNumber": 0,
+        "clientTag": null,
+        "save": false,
+        "addressBookId": null,
+        "latitude": 51.4807417,
+        "longitude": -0.1147992
+    },
+    "dropOff": {
+        "id": "97d21180-a0ba-40d2-bb3c-7a0d44c05590",
+        "addressOne": "221b Baker Street",
+        "addressTwo": null,
+        "city": "London",
+        "county": null,
+        "country": null,
+        "postcode": "NE1 6XE",
+        "contactNumber": "",
+        "contactName": "S Holmes",
+        "dropOffNotes": null,
+        "dropOffFrom": "2020-12-26T16:04:37.339589Z",
+        "dropOffTo": "2020-11-26T17:04:37.339593Z",
+        "signatureRequired": false,
+        "signatureFileLocation": null,
+        "routeStopNumber": 1,
+        "clientTag": "ORDER-123",
+        "deliveryNotes": "Use the side alley ring second bell",
+        "save": false,
+        "addressBookId": null,
+        "latitude": 51.523767,
+        "longitude": -0.1585557
+    },
+    "jobType": "POINT_TO_POINT",
+    "statusHistory": [
+        {
+            "jobStatus": "DRAFT",
+            "appliedAt": "2020-11-26T11:18:00.894498Z",
+            "appliedBy": "bob@example.org:[CUSTOMER]"
+        },
+        {
+            "jobStatus": "SUBMITTED_FOR_OFFERS",
+            "appliedAt": "2020-11-26T11:18:01.079495Z",
+            "appliedBy": "bob@example.org:[CUSTOMER]"
+        }
+    ],
+    "insuranceSelectedAt": "2020-11-26T11:18:00.894440Z",
+    "isTerminal": false
+}
+```
+   
+  
+ 
+
