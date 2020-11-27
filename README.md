@@ -367,7 +367,26 @@ Successful delivery
 ```
 
 
+## Tracking Courier Location
 
+A location report for a job can be retreived by calling GET on ***/api/location/{{JOB_ID}}*** . The loction report includes the current location of the courier undertaking the job along with the ID for the next planned stop and an estaimated time of arrival.  An example reponse is shown below.  The location report is avaialable from thirty minutes before the first pick up window starts and remains available until the job completes.  Requesting a location report for a job that does not meet those requirements will result in a 404.
+
+
+```json
+{
+    "courierLatestLatitude": 51.4052677,
+    "courierLatestLongitude": -0.1003478,
+    "locationTakenUTC": "2020-11-27T07:37:52Z",
+    "nextStop": {
+        "courierToNextStopDistanceKm": 1720.0,
+        "stopId": "327de305-0765-4558-923d-b8d3aff7046d",
+        "stopEta": "2020-11-30T23:04:56.246380Z",
+        "stopLatitude": 51.50527779999999,
+        "stopLongitude": -0.1002778
+    }
+}
+
+``` 
 
  
 
