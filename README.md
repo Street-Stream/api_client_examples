@@ -378,7 +378,7 @@ A location report for a job can be retreived by calling GET on ***/api/location/
     "courierLatestLongitude": -0.1003478,
     "locationTakenUTC": "2020-11-27T07:37:52Z",
     "nextStop": {
-        "courierToNextStopDistanceKm": 1720.0,
+        "courierToNextStopDistanceKm": 1.7,
         "stopId": "327de305-0765-4558-923d-b8d3aff7046d",
         "stopEta": "2020-11-30T23:04:56.246380Z",
         "stopLatitude": 51.50527779999999,
