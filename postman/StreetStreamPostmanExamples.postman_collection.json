@@ -26,7 +26,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"email\": \"john@example.org\", \"authType\": \"CUSTOMER\",\"password\": \"MYPASSWORD\"}",
+					"raw": "{\"email\": \"bob@xample.org\", \"authType\": \"CUSTOMER\",\"password\": \"MYPASSWORD\"}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -49,6 +49,9 @@
 		},
 		{
 			"name": "Create Point to Point",
+			"protocolProfileBehavior": {
+				"followRedirects": true
+			},
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -64,7 +67,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"offerAcceptanceStrategy\": \"AUTO_HIGHEST_RATED_COURIER\",\n    \"packageTypeId\": \"PT1003\",\n    \"jobLabel\": \"My first test job\",\n    \"insuranceCover\": \"CORPORATE\",\n    \"submitForQuotesImmediately\": true,\n    \"pickUp\": {\n        \"contactNumber\" : \"020 7754 5452\",\n        \"contactName\" : \"Jane Doe\",\n        \"addressOne\" : \"A Company HQ\",\n        \"addressTwo\" : \"11 Claylands Road\",\n        \"city\" : \"London\",\n        \"county\" : \"\",\n        \"postcode\" : \"SW8 1NL\",\n        \"pickUpNotes\": \"notes about the pickup\",\n        \"pickUpFrom\": \"2020-11-26T14:34:37.339285Z\",\n        \"pickUpTo\": \"2020-11-26T15:04:37.339319Z\"\n    },\n    \"dropOff\": {\n        \"contactNumber\" : \"\",\n        \"contactName\" : \"S Holmes\",\n        \"addressOne\" : \"221b Baker Street\",\n        \"city\" : \"London\",\n        \"postcode\" : \"NE1 6XE\",\n        \"dropOffFrom\": \"2020-12-26T16:04:37.339589Z\",\n        \"dropOffTo\": \"2020-11-26T17:04:37.339593Z\",\n        \"clientTag\": \"ORDER-123\",\n        \"deliveryNotes\": \"Use the side alley ring second bell\"\n    }\n}",
+					"raw": "{\n    \"offerAcceptanceStrategy\": \"AUTO_HIGHEST_RATED_COURIER\",\n    \"packageTypeId\": \"PT1003\",\n    \"jobLabel\": \"My first test job\",\n    \"insuranceCover\": \"CORPORATE\",\n    \"submitForQuotesImmediately\": true,\n    \"pickUp\": {\n        \"contactNumber\" : \"020 7754 5452\",\n        \"contactName\" : \"Jane Doe\",\n        \"addressOne\" : \"A Company HQ\",\n        \"addressTwo\" : \"11 Claylands Road\",\n        \"city\" : \"London\",\n        \"county\" : \"\",\n        \"postcode\" : \"SW8 1NL\",\n        \"pickUpNotes\": \"notes about the pickup\",\n        \"pickUpFrom\": \"2020-11-29T14:34:37.339285Z\",\n        \"pickUpTo\": \"2020-11-29T15:04:37.339319Z\"\n    },\n    \"dropOff\": {\n        \"contactNumber\" : \"\",\n        \"contactName\" : \"S Holmes\",\n        \"addressOne\" : \"221b Baker Street\",\n        \"city\" : \"London\",\n        \"postcode\" : \"NE1 6XE\",\n        \"dropOffFrom\": \"2020-12-29T16:04:37.339589Z\",\n        \"dropOffTo\": \"2020-11-29T17:04:37.339593Z\",\n        \"clientTag\": \"ORDER-123\",\n        \"deliveryNotes\": \"Use the side alley ring second bell\"\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -81,6 +84,45 @@
 						"api",
 						"job",
 						"pointtopoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Imediate Mutlti",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{AUTHTOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"offerAcceptanceStrategy\": \"AUTO_HIGHEST_RATED_COURIER\",\n    \"jobLabel\": \"My first test job\",\n    \"insuranceCover\": \"CORPORATE\",\n    \"submitForQuotesImmediately\": true,\n    \"optimiseRoute\":true,\n    \"courierTransportType\": \"MEDIUM_VAN_MESSENGER\",\n    \"deliveryFrom\":\"2020-12-09T09:00:00.000000Z\",\n    \"deliveryTo\": \"2020-12-09T10:00:00.000000Z\",\n    \"pickUp\": {\n        \"contactNumber\": \"020 7754 5452\",\n        \"contactName\": \"Jane Doe\",\n        \"addressOne\": \"A Company HQ\",\n        \"addressTwo\": \"11 Claylands Road\",\n        \"city\": \"London\",\n        \"county\": \"\",\n        \"postcode\": \"SW8 1NL\",\n        \"pickUpNotes\": \"please call when you arrive at gate\",\n        \"pickUpFrom\": \"2020-12-09T08:00:00.000000Z\",\n        \"pickUpTo\": \"2020-12-09T09:00:00.000000Z\"\n    },\n    \"drops\": [\n        {\n            \"contactNumber\": \"\",\n            \"contactName\": \"J Middleton\",\n            \"addressOne\": \"Runway East, 10 Finsbury Square\",\n            \"city\": \"London\",\n            \"postcode\": \"EC2A 1AF\",\n            \"clientTag\": \"ORDER-123\",\n             \"deliveryNotes\": \"leave with concierge if needed\"\n        },\n        {\n            \"contactNumber\": \"+44 7700 900796\",\n            \"contactName\": \"S Holmes\",\n            \"addressOne\": \"221b Baker Street\",\n            \"city\": \"London\",\n            \"postcode\": \"NE1 6XE\",\n            \"clientTag\": \"ORDER-456\",\n            \"deliveryNotes\": \"Use the side alley ring second bell\"\n        }\n    ]\n}\n\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{HOST}}/api/job/multidrop",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"job",
+						"multidrop"
 					]
 				}
 			},
@@ -130,10 +172,22 @@
 		{
 			"name": "PackageTypes",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "https://{{HOST}}/api/ref-data/package-types",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"ref-data",
+						"package-types"
+					]
 				}
 			},
 			"response": []
@@ -170,12 +224,95 @@
 			"response": []
 		},
 		{
-			"name": "InsuranceLevels",
+			"name": "CustomerMonthlyStatement",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{AUTHTOKEN}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "https://{{HOST}}/api/users/customer/monthlyStatement?month=11&year=2020",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"customer",
+						"monthlyStatement"
+					],
+					"query": [
+						{
+							"key": "month",
+							"value": "11"
+						},
+						{
+							"key": "year",
+							"value": "2020"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetLocationReportForJob",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{AUTHTOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{HOST}}/api/location/e93d2b0c-1cb7-4ba4-bb54-380ca3ad1c01",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"location",
+						"e93d2b0c-1cb7-4ba4-bb54-380ca3ad1c01"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "InsuranceLevels",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{HOST}}/api/ref-data/insurance-levels",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"ref-data",
+						"insurance-levels"
+					]
 				}
 			},
 			"response": []
@@ -183,10 +320,22 @@
 		{
 			"name": "TransportTypesForMulti",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "https://{{HOST}}/api/ref-data/courier-transport-types",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"ref-data",
+						"courier-transport-types"
+					]
 				}
 			},
 			"response": []
