@@ -388,6 +388,177 @@ A location report for a job can be retreived by calling GET on ***/api/location/
 
 ``` 
 
+## Create a Multi Drop Job
+
+Below is a simple example of the creation of a job with one pickup and two drops.  The obivous difference is we have an array of drops rather than a single dropOff.  Also multidrop drops don't have an individual from and to time.  Instead the job has a top level deliveryFrom and deliveryTo tine window.  This represents the earliest time thaat a courier should start delivering and time by which they should finish the curcuit.  Additionally there is a top level optimise route attribute which is set to true.  Where this is a true the system will optimise the route plan for the orders rather that being based on the order provided.  Where a return to base job is required the request can include the pick up address as the last drop.  Route optimisation will detect this and only optimise the order of the other drops.
+
+```json
+{
+    "offerAcceptanceStrategy": "AUTO_HIGHEST_RATED_COURIER",
+    "jobLabel": "My first test multidrop job",
+    "insuranceCover": "CORPORATE",
+    "submitForQuotesImmediately": true,
+    "optimiseRoute":true,
+    "courierTransportType": "MEDIUM_VAN_MESSENGER",
+    "deliveryFrom":"2020-12-09T09:00:00.000000Z",
+    "deliveryTo": "2020-12-09T10:00:00.000000Z",
+    "pickUp": {
+        "contactNumber": "020 7754 5452",
+        "contactName": "Jane Doe",
+        "addressOne": "A Company HQ",
+        "addressTwo": "11 Claylands Road",
+        "city": "London",
+        "county": "",
+        "postcode": "SW8 1NL",
+        "pickUpNotes": "please call when you arrive at gate",
+        "pickUpFrom": "2020-12-09T08:00:00.000000Z",
+        "pickUpTo": "2020-12-09T09:00:00.000000Z"
+    },
+    "drops": [
+        {
+            "contactNumber": "",
+            "contactName": "J Middleton",
+            "addressOne": "Runway East, 10 Finsbury Square",
+            "city": "London",
+            "postcode": "EC2A 1AF",
+            "clientTag": "ORDER-123",
+             "deliveryNotes": "leave with concierge if needed"
+        },
+        {
+            "contactNumber": "+44 7700 900796",
+            "contactName": "S Holmes",
+            "addressOne": "221b Baker Street",
+            "city": "London",
+            "postcode": "NE1 6XE",
+            "clientTag": "ORDER-456",
+            "deliveryNotes": "Use the side alley ring second bell"
+        }
+    ]
+}
+```
+
+### Suceesful creation response
+
+Belwo is the response for getting the created job using the redirect URL returned in response to the POST request.  You will see in addition to the submitted data Street Stream has geocoded locations, added pricing and added estiamte of time and distance for the job.
+
+Each drop now has a ***routeStopNumber*** to indicate the planned order.  In this case the two drops have been reordered from the order with which they were sent.
+
+
+```json
+{
+    "id": "d92148e7-381e-4cb7-95be-8424e27fcb61",
+    "offerAcceptanceStrategy": "AUTO_HIGHEST_RATED_COURIER",
+    "courierTransportType": "MEDIUM_VAN_MESSENGER",
+    "jobLabel": "My first multidrop test job",
+    "jobExpiry": "2020-12-09T09:00:00Z",
+    "jobType": "MULTI_DROP",
+    "jobCharge": {
+        "exVatTotalPriceBeforeInsurance": 38.90,
+        "exVatInsurance": 2.00,
+        "payableVat": 8.18,
+        "totalPayableWithVat": 49.08,
+        "currencyCode": "GBP",
+        "discountAmount": 0.00
+    },
+    "jobStatus": "SUBMITTED_FOR_OFFERS",
+    "jobCreated": "2020-12-08T11:06:49.473652Z",
+    "jobLastModified": "2020-12-08T11:06:50.381632Z",
+    "courierId": null,
+    "feedbackProvided": false,
+    "confirmedPaymentMechanism": "INVOICE",
+    "insuranceCover": "CORPORATE",
+    "estimatedRouteDistanceKm": 13.50,
+    "estimatedRouteTimeSeconds": 4101,
+    "quotes": [],
+    "selectedQuote": null,
+    "pickUp": {
+        "id": "543bc907-3ffa-42b0-b7c7-b83bcb804064",
+        "addressOne": "A Company HQ",
+        "addressTwo": "11 Claylands Road",
+        "city": "London",
+        "county": "",
+        "country": null,
+        "postcode": "SW8 1NL",
+        "contactNumber": "020 7754 5452",
+        "contactName": "Jane Doe",
+        "pickUpNotes": "please call when you arrive at gate",
+        "pickUpFrom": "2020-12-09T08:00:00Z",
+        "pickUpTo": "2020-12-09T09:00:00Z",
+        "routeStopNumber": 0,
+        "clientTag": null,
+        "save": false,
+        "addressBookId": null,
+        "latitude": 51.4807417,
+        "longitude": -0.1147992
+    },
+    "drops": [
+        {
+            "id": "1fe89c85-65f3-4013-aa3e-3be228d368e6",
+            "addressOne": "221b Baker Street",
+            "addressTwo": null,
+            "city": "London",
+            "county": null,
+            "country": null,
+            "postcode": "NE1 6XE",
+            "contactNumber": "+44 7700 900796",
+            "contactName": "S Holmes",
+            "dropOffNotes": null,
+            "dropOffFrom": null,
+            "dropOffTo": null,
+            "signatureRequired": false,
+            "signatureFileLocation": null,
+            "routeStopNumber": 1,
+            "clientTag": "ORDER-456",
+            "deliveryNotes": "Use the side alley ring second bell",
+            "save": false,
+            "addressBookId": null,
+            "latitude": 51.523767,
+            "longitude": -0.1585557
+        },
+        {
+            "id": "062482df-160e-4743-82e5-a30859c3f71b",
+            "addressOne": "Runway East, 10 Finsbury Square",
+            "addressTwo": null,
+            "city": "London",
+            "county": null,
+            "country": null,
+            "postcode": "EC2A 1AF",
+            "contactNumber": "",
+            "contactName": "J Middleton",
+            "dropOffNotes": null,
+            "dropOffFrom": null,
+            "dropOffTo": null,
+            "signatureRequired": false,
+            "signatureFileLocation": null,
+            "routeStopNumber": 2,
+            "clientTag": "ORDER-123",
+            "deliveryNotes": "leave with concierge if needed",
+            "save": false,
+            "addressBookId": null,
+            "latitude": 51.521224,
+            "longitude": -0.08730059999999999
+        }
+    ],
+    "statusHistory": [
+        {
+            "jobStatus": "DRAFT",
+            "appliedAt": "2020-12-08T11:06:49.473728Z",
+            "appliedBy": "jonas.partner@gmail.com:[CUSTOMER]"
+        },
+        {
+            "jobStatus": "SUBMITTED_FOR_OFFERS",
+            "appliedAt": "2020-12-08T11:06:50.181901Z",
+            "appliedBy": "jonas.partner@gmail.com:[CUSTOMER]"
+        }
+    ],
+    "deliveryFrom": "2020-12-09T09:00:00Z",
+    "deliveryTo": "2020-12-09T10:00:00Z",
+    "insuranceSelectedAt": "2020-12-08T11:06:49.473647Z",
+    "isTerminal": false
+}
+
+```
+
  
 
 
