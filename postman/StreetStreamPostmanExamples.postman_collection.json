@@ -26,7 +26,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"email\": \"bob@xample.org\", \"authType\": \"CUSTOMER\",\"password\": \"MYPASSWORD\"}",
+					"raw": "{\"email\": \"bob@example.org\", \"authType\": \"CUSTOMER\",\"password\": \"MYPASSWORD\"}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -48,7 +48,7 @@
 			"response": []
 		},
 		{
-			"name": "Create Point to Point",
+			"name": "Create Point to Point Specify Package",
 			"protocolProfileBehavior": {
 				"followRedirects": true
 			},
@@ -67,7 +67,49 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"offerAcceptanceStrategy\": \"AUTO_HIGHEST_RATED_COURIER\",\n    \"packageTypeId\": \"PT1003\",\n    \"jobLabel\": \"My first test job\",\n    \"insuranceCover\": \"CORPORATE\",\n    \"submitForQuotesImmediately\": true,\n    \"pickUp\": {\n        \"contactNumber\" : \"020 7754 5452\",\n        \"contactName\" : \"Jane Doe\",\n        \"addressOne\" : \"A Company HQ\",\n        \"addressTwo\" : \"11 Claylands Road\",\n        \"city\" : \"London\",\n        \"county\" : \"\",\n        \"postcode\" : \"SW8 1NL\",\n        \"pickUpNotes\": \"notes about the pickup\",\n        \"pickUpFrom\": \"2020-11-29T14:34:37.339285Z\",\n        \"pickUpTo\": \"2020-11-29T15:04:37.339319Z\"\n    },\n    \"dropOff\": {\n        \"contactNumber\" : \"\",\n        \"contactName\" : \"S Holmes\",\n        \"addressOne\" : \"221b Baker Street\",\n        \"city\" : \"London\",\n        \"postcode\" : \"NE1 6XE\",\n        \"dropOffFrom\": \"2020-12-29T16:04:37.339589Z\",\n        \"dropOffTo\": \"2020-11-29T17:04:37.339593Z\",\n        \"clientTag\": \"ORDER-123\",\n        \"deliveryNotes\": \"Use the side alley ring second bell\"\n    }\n}",
+					"raw": "{\n    \"offerAcceptanceStrategy\": \"AUTO_HIGHEST_RATED_COURIER\",\n    \"packageTypeId\": \"PT1003\",\n    \"jobLabel\": \"My first test job\",\n    \"insuranceCover\": \"CORPORATE\",\n    \"submitForQuotesImmediately\": true,\n    \"pickUp\": {\n        \"contactNumber\" : \"020 7754 5452\",\n        \"contactName\" : \"Jane Doe\",\n        \"addressOne\" : \"A Company HQ\",\n        \"addressTwo\" : \"11 Claylands Road\",\n        \"city\" : \"London\",\n        \"county\" : \"\",\n        \"postcode\" : \"SW8 1NL\",\n        \"pickUpNotes\": \"notes about the pickup\",\n        \"pickUpFrom\": \"2021-05-12T14:34:37.339285Z\",\n        \"pickUpTo\": \"2021-05-12T15:04:37.339319Z\"\n    },\n    \"dropOff\": {\n        \"contactNumber\" : \"\",\n        \"contactName\" : \"S Holmes\",\n        \"addressOne\" : \"221b Baker Street\",\n        \"city\" : \"London\",\n        \"postcode\" : \"NE1 6XE\",\n        \"dropOffFrom\": \"2021-05-12T16:04:37.339589Z\",\n        \"dropOffTo\": \"2021-05-12T17:04:37.339593Z\",\n        \"clientTag\": \"ORDER-123\",\n        \"deliveryNotes\": \"Use the side alley ring second bell\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{HOST}}/api/job/pointtopoint",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"job",
+						"pointtopoint"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Point to Point Specify Transport",
+			"protocolProfileBehavior": {
+				"followRedirects": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{AUTHTOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"offerAcceptanceStrategy\": \"AUTO_HIGHEST_RATED_COURIER\",\n    \"courierTransportType\": \"PALLET_CARRIER_MESSENGER\",\n    \"jobLabel\": \"My first test job\",\n    \"insuranceCover\": \"CORPORATE\",\n    \"submitForQuotesImmediately\": true,\n    \"pickUp\": {\n        \"contactNumber\" : \"020 7754 5452\",\n        \"contactName\" : \"Jane Doe\",\n        \"addressOne\" : \"A Company HQ\",\n        \"addressTwo\" : \"11 Claylands Road\",\n        \"city\" : \"London\",\n        \"county\" : \"\",\n        \"postcode\" : \"SW8 1NL\",\n        \"pickUpNotes\": \"notes about the pickup\",\n        \"pickUpFrom\": \"2021-05-12T14:34:37.339285Z\",\n        \"pickUpTo\": \"2020-05-12T15:04:37.339319Z\"\n    },\n    \"dropOff\": {\n        \"contactNumber\" : \"\",\n        \"contactName\" : \"S Holmes\",\n        \"addressOne\" : \"221b Baker Street\",\n        \"city\" : \"London\",\n        \"postcode\" : \"NE1 6XE\",\n        \"dropOffFrom\": \"2020-05-12T16:04:37.339589Z\",\n        \"dropOffTo\": \"2020-05-12T17:04:37.339593Z\",\n        \"clientTag\": \"ORDER-123\",\n        \"deliveryNotes\": \"Use the side alley ring second bell\"\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -339,7 +381,39 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Estimate",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{HOST}}/api/estimate?startPostcode=se1+0nz&endPostcode=se15+3bz&packageTypeId=PT1001",
+					"protocol": "https",
+					"host": [
+						"{{HOST}}"
+					],
+					"path": [
+						"api",
+						"estimate"
+					],
+					"query": [
+						{
+							"key": "startPostcode",
+							"value": "se1+0nz"
+						},
+						{
+							"key": "endPostcode",
+							"value": "se15+3bz"
+						},
+						{
+							"key": "packageTypeId",
+							"value": "PT1001"
+						}
+					]
+				}
+			},
+			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
