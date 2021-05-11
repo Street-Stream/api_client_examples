@@ -153,7 +153,7 @@ DELIVERY ATTEMPT FAILED | Yes | Courier was unable to deliver the package on thi
 DELIVERED | Yes | Package was succssfulyl deliverd.  Notes and singature if requested will now be avaialble.  
 
 
-## Creating a Point to Point Job
+## Creating a Point to Point Job for a Package
 
 Below is an example taken fron the Postman collection requesting a point to point job for package code PT1003 (an envelope).  The job is to be submitted immediately with the Street Stream system selecting the highest rated courier able to do the job. All timestamps must use UTC.  Most text fields are limited to a lenght of 255 with the exception of notes which allow up to 500.  Address two , county and country can be provided ommitted or null.  Address one can be used to contain business and first line for example 'Blogs and Blogs Ltd, 12 Mornington Crescent' as one line.
 
@@ -210,6 +210,7 @@ Issue a GET request will return something similar to the below. The returned dat
     "id": "6d4f4a91-18c2-491e-89df-c97edf9775df",
     "offerAcceptanceStrategy": "AUTO_HIGHEST_RATED_COURIER",
     "packageTypeId": "PT1003",
+    "courierTransportTypeRequested": "CARGO_BIKE",
     "jobLabel": "My first test job",
     "jobExpiry": "2020-11-26T15:04:37.339319Z",
        "jobCharge": {
@@ -291,6 +292,136 @@ Issue a GET request will return something similar to the below. The returned dat
     "isTerminal": false
 }
 ```
+
+## Creating a Point to Point Job Specifying a Transport Type
+
+In the case where a point to point job specifies a package the Street Stream system will then determine an appropriate transport type based on dimensions and weight.  This in turn determines which couriers we notify and which couriers we will allow to take on the job.  There may be occassions where there are other considerations beyond dimensions and weight, for example fragility.  Where customers wish to have more control for example such as the case of delviering a cake where a car or van may be a better choice it is possible to skip the package parameter and specify the transport type directly as in the example below.
+
+
+```json
+{
+    "offerAcceptanceStrategy": "AUTO_HIGHEST_RATED_COURIER",
+    "courierTransportType": "PALLET_CARRIER_MESSENGER",
+    "jobLabel": "My first test job",
+    "insuranceCover": "CORPORATE",
+    "submitForQuotesImmediately": true,
+    "pickUp": {
+        "contactNumber" : "020 7754 5452",
+        "contactName" : "Jane Doe",
+        "addressOne" : "A Company HQ",
+        "addressTwo" : "11 Claylands Road",
+        "city" : "London",
+        "county" : "",
+        "postcode" : "SW8 1NL",
+        "pickUpNotes": "notes about the pickup",
+        "pickUpFrom": "2021-05-12T14:34:37.339285Z",
+        "pickUpTo": "2021-05-12T15:04:37.339319Z"
+    },
+    "dropOff": {
+        "contactNumber" : "",
+        "contactName" : "S Holmes",
+        "addressOne" : "221b Baker Street",
+        "city" : "London",
+        "postcode" : "NE1 6XE",
+        "dropOffFrom": "2021-05-12T16:04:37.339589Z",
+        "dropOffTo": "2021-05-12T17:04:37.339593Z",
+        "clientTag": "ORDER-123",
+        "deliveryNotes": "Use the side alley ring second bell"
+    }
+}
+``` 
+
+The response below shows the one difference between specifying transport type and package.  Where transport type is specified package will be null.  Where package type is specified we will record the default transport type determined by the system.
+
+```json
+{
+    "id": "c687119c-03b0-4992-922f-34ec3f0f654d",
+    "offerAcceptanceStrategy": "AUTO_HIGHEST_RATED_COURIER",
+    "packageTypeId": null,
+    "courierTransportTypeRequested": "PALLET_CARRIER_MESSENGER",
+    "jobLabel": "My first test job",
+    "jobExpiry": "2020-05-12T15:04:37.339319Z",
+    "jobCharge": {
+        "exVatTotalPriceBeforeInsurance": 28.78,
+        "exVatInsurance": 2.00,
+        "payableVat": 6.16,
+        "totalPayableWithVat": 36.94,
+        "currencyCode": "GBP",
+        "discountAmount": 0.00
+    },
+    "jobStatus": "SUBMITTED_FOR_OFFERS",
+    "jobCreated": "2021-05-11T04:57:14.079803Z",
+    "jobLastModified": "2021-05-11T04:57:14.476246Z",
+    "courierId": null,
+    "feedbackProvided": false,
+    "confirmedPaymentMechanism": "INVOICE",
+    "insuranceCover": "CORPORATE",
+    "estimatedRouteDistanceKm": 7.28,
+    "estimatedRouteTimeSeconds": 2026,
+    "quotes": [],
+    "selectedQuote": null,
+    "pickUp": {
+        "id": "479200ae-0cec-468f-a2d4-f17d16a512c6",
+        "addressOne": "A Company HQ",
+        "addressTwo": "11 Claylands Road",
+        "city": "London",
+        "county": "",
+        "country": null,
+        "postcode": "SW8 1NL",
+        "contactNumber": "020 7754 5452",
+        "contactName": "Jane Doe",
+        "pickUpNotes": "notes about the pickup",
+        "pickUpFrom": "2021-05-12T14:34:37.339285Z",
+        "pickUpTo": "2020-05-12T15:04:37.339319Z",
+        "routeStopNumber": 0,
+        "clientTag": null,
+        "save": false,
+        "addressBookId": null,
+        "latitude": 51.4807417,
+        "longitude": -0.1147992
+    },
+    "dropOff": {
+        "id": "17c935ae-3f2b-4bf1-a35e-dba844ed7112",
+        "addressOne": "221b Baker Street",
+        "addressTwo": null,
+        "city": "London",
+        "county": null,
+        "country": null,
+        "postcode": "NE1 6XE",
+        "contactNumber": "",
+        "contactName": "S Holmes",
+        "dropOffNotes": null,
+        "dropOffFrom": "2020-05-12T16:04:37.339589Z",
+        "dropOffTo": "2020-05-12T17:04:37.339593Z",
+        "signatureRequired": false,
+        "signatureFileLocation": null,
+        "routeStopNumber": 1,
+        "clientTag": "ORDER-123",
+        "deliveryNotes": "Use the side alley ring second bell",
+        "save": false,
+        "addressBookId": null,
+        "latitude": 51.523767,
+        "longitude": -0.1585557
+    },
+    "jobType": "POINT_TO_POINT",
+    "statusHistory": [
+        {
+            "jobStatus": "DRAFT",
+            "appliedAt": "2021-05-11T04:57:14.080169Z",
+            "appliedBy": "jonas.partner@gmail.com:[CUSTOMER]"
+        },
+        {
+            "jobStatus": "SUBMITTED_FOR_OFFERS",
+            "appliedAt": "2021-05-11T04:57:14.283960Z",
+            "appliedBy": "jonas.partner@gmail.com:[CUSTOMER]"
+        }
+    ],
+    "insuranceSelectedAt": "2021-05-11T04:57:14.079768Z",
+    "isTerminal": false
+}
+```
+
+
 
 
 ## Getting Notified About Status Updates
