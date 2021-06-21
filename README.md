@@ -41,7 +41,7 @@ In addition to our production environment we provide a staging environment which
 ###Staging
 
 * https://stage-api.streetstreamdev.co.uk      **API**
-* https://staging.streetstream.co.uk **Customer web app**
+* https://stage.streetstreamdev.co.uk **Customer web app**
 
 ### Production 
   
