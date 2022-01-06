@@ -262,14 +262,14 @@ Issue a GET request will return something similar to the below. The returned dat
         "postcode": "NE1 6XE",
         "contactNumber": "",
         "contactName": "S Holmes",
-        "dropOffNotes": null,
+        "dropOffNotes": "Use the side alley ring second bell",
         "dropOffFrom": "2020-12-26T16:04:37.339589Z",
         "dropOffTo": "2020-11-26T17:04:37.339593Z",
         "signatureRequired": false,
         "signatureFileLocation": null,
         "routeStopNumber": 1,
         "clientTag": "ORDER-123",
-        "deliveryNotes": "Use the side alley ring second bell",
+        "deliveryNotes": null,
         "save": false,
         "addressBookId": null,
         "latitude": 51.523767,
@@ -326,7 +326,7 @@ In the case where a point to point job specifies a package the Street Stream sys
         "dropOffFrom": "2021-05-12T16:04:37.339589Z",
         "dropOffTo": "2021-05-12T17:04:37.339593Z",
         "clientTag": "ORDER-123",
-        "deliveryNotes": "Use the side alley ring second bell"
+        "dropOffNotes": "Use the side alley ring second bell"
     }
 }
 ``` 
@@ -390,14 +390,14 @@ The response below shows the one difference between specifying transport type an
         "postcode": "NE1 6XE",
         "contactNumber": "",
         "contactName": "S Holmes",
-        "dropOffNotes": null,
+        "dropOffNotes": "Use the side alley ring second bell",
         "dropOffFrom": "2020-05-12T16:04:37.339589Z",
         "dropOffTo": "2020-05-12T17:04:37.339593Z",
         "signatureRequired": false,
         "signatureFileLocation": null,
         "routeStopNumber": 1,
         "clientTag": "ORDER-123",
-        "deliveryNotes": "Use the side alley ring second bell",
+        "deliveryNotes": null,
         "save": false,
         "addressBookId": null,
         "latitude": 51.523767,
@@ -553,7 +553,7 @@ Below is a simple example of the creation of a job with one pick up and two drop
             "city": "London",
             "postcode": "EC2A 1AF",
             "clientTag": "ORDER-123",
-             "deliveryNotes": "leave with concierge if needed"
+            "dropOffNotes": "leave with concierge if needed"
         },
         {
             "contactNumber": "+44 7700 900796",
@@ -562,7 +562,7 @@ Below is a simple example of the creation of a job with one pick up and two drop
             "city": "London",
             "postcode": "NE1 6XE",
             "clientTag": "ORDER-456",
-            "deliveryNotes": "Use the side alley ring second bell"
+            "dropOffNotes": "Use the side alley ring second bell"
         }
     ]
 }
@@ -633,14 +633,14 @@ Each drop now has a ***routeStopNumber*** to indicate the planned order.  In thi
             "postcode": "NE1 6XE",
             "contactNumber": "+44 7700 900796",
             "contactName": "S Holmes",
-            "dropOffNotes": null,
+            "dropOffNotes": "Use the side alley ring second bell",
             "dropOffFrom": null,
             "dropOffTo": null,
             "signatureRequired": false,
             "signatureFileLocation": null,
             "routeStopNumber": 1,
             "clientTag": "ORDER-456",
-            "deliveryNotes": "Use the side alley ring second bell",
+            "deliveryNotes": null,
             "save": false,
             "addressBookId": null,
             "latitude": 51.523767,
@@ -657,13 +657,13 @@ Each drop now has a ***routeStopNumber*** to indicate the planned order.  In thi
             "contactNumber": "",
             "contactName": "J Middleton",
             "dropOffNotes": null,
-            "dropOffFrom": null,
+            "dropOffFrom":  "leave with concierge if needed",
             "dropOffTo": null,
             "signatureRequired": false,
             "signatureFileLocation": null,
             "routeStopNumber": 2,
             "clientTag": "ORDER-123",
-            "deliveryNotes": "leave with concierge if needed",
+            "deliveryNotes": null,
             "save": false,
             "addressBookId": null,
             "latitude": 51.521224,
